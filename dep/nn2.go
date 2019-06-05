@@ -308,7 +308,10 @@ func (nn *neuralnetwork2) train(examples []example) error {
 
 	for batch := 0; batch < batches; batch++ {
 		for _, ex := range examples[start:end] {
-			nn.feats2vec(ex.features)
+			err := nn.feats2vec(ex.features)
+			if err != nil {
+				return err
+			}
 			tid := lookupTransition(ex.transition, nn.transitions)
 
 			if err := G.UnsafeLet(nn.cost, G.S(tid)); err != nil {
@@ -321,7 +324,7 @@ func (nn *neuralnetwork2) train(examples []example) error {
 
 			nn.vm.Reset()
 		}
-		if err := nn.solver.Step(nn.model); err != nil {
+		if err := nn.solver.Step(G.NodesToValueGrads(nn.model)); err != nil {
 			err = errors.Wrapf(err, "Stepping on the model failed %v", batch)
 			return err
 		}
@@ -345,7 +348,10 @@ func (nn *neuralnetwork2) train(examples []example) error {
 
 // pred predicts the index of the transitions
 func (nn *neuralnetwork2) pred(ind []int) (int, error) {
-	nn.feats2vec(ind)
+	err := nn.feats2vec(ind)
+	if err != nil {
+		return 0, err
+	}
 
 	// f, _ := os.OpenFile("LOOOOOG", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	// logger := log.New(f, "", 0)
