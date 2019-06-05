@@ -1,4 +1,4 @@
-module github.com/durp/lingo
+module github.com/chewxy/lingo
 
 go 1.12
 
@@ -6,8 +6,6 @@ require (
 	github.com/abiosoft/ishell v2.0.0+incompatible
 	github.com/abiosoft/readline v0.0.0-20180607040430-155bce2042db // indirect
 	github.com/awalterschulze/gographviz v0.0.0-20190522210029-fa59802746ab
-	github.com/chewxy/lingo v0.0.0-20180507102533-238c8836f032
-	github.com/durp/gorgonia v0.9.1 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/flynn-archive/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
 	github.com/kljensen/snowball v0.6.0
