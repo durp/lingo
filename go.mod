@@ -17,7 +17,7 @@ require (
 	github.com/xtgo/set v1.0.0
 	golang.org/x/text v0.3.2
 	gonum.org/v1/gonum v0.0.0-20190602094245-c4a599f7b712 // indirect
-	gorgonia.org/gorgonia v0.0.0-00010101000000-000000000000
+	gorgonia.org/gorgonia v0.9.2-0.20190605194449-da60c18a067a
 	gorgonia.org/tensor v0.9.0-beta
 )
 
