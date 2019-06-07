@@ -186,12 +186,14 @@ func allSentences() []treebank.SentenceTag {
 	conv := func(s string) string {
 		return s
 	}
-	if lingo.BUILD_RELSET == "universalv2" {
+	if lingo.BUILD_RELSET == "universalrelv2" {
 		conv = func(s string) string {
-			return strings.ReplaceAll(s, "dobj", "obj")
+			s = strings.ReplaceAll(s, "dobj", "obj")
+			return strings.ReplaceAll(s, "neg", "advmod")
 		}
 	}
-	sentenceTags := treebank.ReadConllu(strings.NewReader(conv(nnps)))
+	var sentenceTags []treebank.SentenceTag
+	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(conv(nnps)))...)
 	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(conv(simple)))...)
 	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(conv(med)))...)
 	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(conv(long)))...)
