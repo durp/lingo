@@ -237,7 +237,7 @@ func (t *Trainer) train(epochs int) error {
 		}
 	}
 
-	examples := makeExamples(t.trainingSet, t.nn.NNConfig, t.nn.dict, t.ts, t)
+	examples := makeExamples(t.trainingSet, t.nn.dict, t.ts, t)
 
 	for e := 0; e < epochs; e++ {
 		if err := t.nn.train(examples); err != nil {
@@ -253,7 +253,7 @@ func (t *Trainer) train(epochs int) error {
 	return nil
 }
 
-// crossValidateTrain trains the model but also does cross validation to ensure overfitting don't happen.
+// crossValidateTrain trains the model but also does cross validation to mitigate over-fitting.
 func (t *Trainer) crossValidateTrain(epochs int) error {
 	if t.perf != nil {
 		defer func() {
@@ -274,7 +274,7 @@ func (t *Trainer) crossValidateTrain(epochs int) error {
 			defer close(epochChan)
 		}
 	}
-	examples := makeExamples(t.trainingSet, t.nn.NNConfig, t.nn.dict, t.ts, t)
+	examples := makeExamples(t.trainingSet, t.nn.dict, t.ts, t)
 
 	var best Performance
 	for e := 0; e < epochs; e++ {
@@ -297,11 +297,11 @@ func (t *Trainer) crossValidateTrain(epochs int) error {
 				if t.SaveBest != "" {
 					f, err := os.Create(t.SaveBest)
 					if err != nil {
-						err = errors.Wrapf(err, "Unable to open SaveBest file %q", t.SaveBest)
+						return errors.Wrapf(err, "Unable to open SaveBest file %q", t.SaveBest)
+					}
+					if err := t.Model.SaveWriter(f); err != nil {
 						return err
 					}
-
-					t.Model.SaveWriter(f)
 				}
 			}
 		}

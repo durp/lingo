@@ -2,8 +2,6 @@ package treebank
 
 import "github.com/chewxy/lingo"
 
-var alreadyLogged map[string]bool = make(map[string]bool)
-
 // TODO : CHECK
 func StringToLexType(tag string) lingo.LexemeType {
 	var lexType lingo.LexemeType

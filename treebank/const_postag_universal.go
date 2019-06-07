@@ -4,7 +4,7 @@ package treebank
 
 import "github.com/chewxy/lingo"
 
-var posTagTable map[string]lingo.POSTag = map[string]lingo.POSTag{
+var posTagTable = map[string]lingo.POSTag{
 	"X":     lingo.X,
 	"ADJ":   lingo.ADJ,
 	"ADP":   lingo.ADP,

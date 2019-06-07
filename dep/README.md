@@ -32,24 +32,24 @@ We say "human" is the head of the words "I" and "am". Therefore, "I" and "am" ar
 
 Let's look at a simple example to concrefy the ideas: "The cat sat on the mat". Here are the states
 
-| Step | Stack                         | Buffer                                    | Transition |
-|------|-------------------------------|-------------------------------------------|------------|
-|0 | [ROOT]                            | ["The", "cat", "sat", "on", "the", "mat"] | Shift      |
-|1 | [ROOT, "The"]                     | ["cat", "sat", "on", "the", "mat"]        | Shift      |
-|2 | [ROOT, "The", "cat"]              | ["sat", "on", "the", "mat"]               | Left       | 
-|3 | [ROOT, "cat"]                     | ["sat", "on", "the", "mat"]               | Shift      |
-|4 | [ROOT, "cat", "sat"]              | ["on", "the", "mat"]                      | Left       |
-|5 | [ROOT, "sat"]                     | ["on", "the", "mat"]                      | Shift      |
-|6 | [ROOT, "sat", "on"]               | ["the", "mat"]                            | Shift      |
-|7 | [ROOT, "sat", "on", "the"]        | ["mat"]                                   | Shift      |
-|8 | [ROOT, "sat", "on", "the", "mat"] | []                                        | Left       |
-|9 | [ROOT, "sat", "on", "mat"]        | []                                        | Left       |
-|10| [ROOT, "sat", "mat"]              | []                                        | Right      |
-|11| [ROOT, "sat"]                     | []                                        | Left       |
+| Step | Stack                         | Buffer                                    | Transition | Relation Added |
+|------|-------------------------------|-------------------------------------------|------------|----------------|
+|0 | [ROOT]                            | ["The", "cat", "sat", "on", "the", "mat"] | Shift      |                |
+|1 | [ROOT, "The"]                     | ["cat", "sat", "on", "the", "mat"]        | Shift      |                |
+|2 | [ROOT, "The", "cat"]              | ["sat", "on", "the", "mat"]               | Left       | (the <- cat)   |
+|3 | [ROOT, "cat"]                     | ["sat", "on", "the", "mat"]               | Shift      |                |
+|4 | [ROOT, "cat", "sat"]              | ["on", "the", "mat"]                      | Left       | (cat <- sat)   |
+|5 | [ROOT, "sat"]                     | ["on", "the", "mat"]                      | Shift      |                |
+|6 | [ROOT, "sat", "on"]               | ["the", "mat"]                            | Shift      |                |
+|7 | [ROOT, "sat", "on", "the"]        | ["mat"]                                   | Shift      |                |
+|8 | [ROOT, "sat", "on", "the", "mat"] | []                                        | Left       | (the <- mat)   |
+|9 | [ROOT, "sat", "on", "mat"]        | []                                        | Left       | (on <- mat)    |
+|10| [ROOT, "sat", "mat"]              | []                                        | Right      | (sat -> mat)   |
+|11| [ROOT, "sat"]                     | []                                        | Right      | (ROOT -> sat)  |
 
 The above transitions produces this parse tree:
 
-!["the cat sat on the mat"](https://github.com/chewxy/lingo/blob/master/dep/documentation/thecatsatonthemat.dot.png?raw=true)
+!["the cat sat on the mat"](./documentation/thecatsatonthemat.dot.png?raw=true)
 
 The real question then is of course - how does the system know which is the correct transition to emit, given the state?
 
@@ -65,10 +65,10 @@ As for the input, it's a little bit more complex. The input consists of the stac
 * Use the top 3 words of the buffer
 * Use the first and second leftmost/rightmost children of the first two words of the stack
 
-Instead of directly using the words, POS Tag and dependency relations as features, the rather ingenious idea was that it would use vectors drawn from an embedding matrix to represent these features instead. So instead of building sparse features, concatenating the vectors form a fixed sized input vector. This makes training the network much more expedient. 
-You'll find this in [features.go](https://github.com/chewxy/lingo/blob/master/dependencyParser/features.go)
+Instead of directly using the words, POS Tag, and dependency relations as features, the rather ingenious idea was that the algorithm would use instead use vectors drawn from an embedding matrix to represent these features. So rather than building sparse features as input, concatenating the vectors forms a fixed sized input vector. This makes training the network much more expedient. 
+You'll find this implemented in [features.go](./features.go)
 
-Given each state above, it'd be fairly trivial to extract an input vector based on the 18 "features" listed and feed forwards to a neural network. The result is a fast parser.
+Given each state above, it is fairly trivial to extract an input vector based on the 18 "features" listed and feed forwards to a neural network. The result is a fast parser.
 
 ### Neural Network ###
 
@@ -78,7 +78,7 @@ The machine learning algorithm behind this parser is a simple 3-layered network.
 
 ## Hairy Bits ##
 
-The hairy bits of this is the oracle. Specifically, the question: given a training sentence, how do we generate correct examples such as the table above? 
+The hairy bits of this is the oracle. Specifically, answering the question: Given a training sentence, how do we generate correct examples, such as the table above? 
 
 TODO: finish writing this section
 
@@ -95,7 +95,7 @@ This package provides three main data structures for use:
 
 ## Basic NLP Pipeline ##
 
-```go
+```
 func main() {
 	inputString: `The cat sat on the mat`
 	lx := lexer.New("dummy", strings.NewReader(inputString)) // lexer - required to break a sentence up into words. 

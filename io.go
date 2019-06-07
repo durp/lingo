@@ -40,39 +40,39 @@ func (a *Annotation) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteRune('{')
 
-	fmt.Fprintf(&buf, "\"ID\": %d,", a.ID)
-	fmt.Fprintf(&buf, "\"Value\": %q,", a.Value)
-	fmt.Fprintf(&buf, "\"POSTag\": \"%v\",", a.POSTag)
-	fmt.Fprintf(&buf, "\"Label\": \"%v\"", a.DependencyType)
+	_, _ = fmt.Fprintf(&buf, "\"ID\": %d,", a.ID)
+	_, _ = fmt.Fprintf(&buf, "\"Value\": %q,", a.Value)
+	_, _ = fmt.Fprintf(&buf, "\"POSTag\": \"%v\",", a.POSTag)
+	_, _ = fmt.Fprintf(&buf, "\"Label\": \"%v\"", a.DependencyType)
 
 	if a.Head != nil {
 		if a.Head == rootAnnotation {
-			fmt.Fprintf(&buf, ", \"Head\": -1000") // special signifier for root annotations
+			_, _ = fmt.Fprintf(&buf, ", \"Head\": -1000") // special signifier for root annotations
 		} else {
-			fmt.Fprintf(&buf, ", \"Head\": %d", a.HeadID())
+			_, _ = fmt.Fprintf(&buf, ", \"Head\": %d", a.HeadID())
 		}
 	}
 
 	if a.Lemma != "" {
-		fmt.Fprintf(&buf, ", \"Lemma\": %q", a.Lemma)
+		_, _ = fmt.Fprintf(&buf, ", \"Lemma\": %q", a.Lemma)
 	}
 
 	// Lowered is not serialized because it's a simple function call away
 
 	if a.Stem != "" {
-		fmt.Fprintf(&buf, ",\"Stem\": %q", a.Stem)
+		_, _ = fmt.Fprintf(&buf, ",\"Stem\": %q", a.Stem)
 	}
 
 	if a.Cluster > 0 {
-		fmt.Fprintf(&buf, ",\"Cluster\": %d", a.Cluster)
+		_, _ = fmt.Fprintf(&buf, ",\"Cluster\": %d", a.Cluster)
 	}
 
 	if a.Shape != "" {
-		fmt.Fprintf(&buf, ",\"Shape\": %q", a.Shape)
+		_, _ = fmt.Fprintf(&buf, ",\"Shape\": %q", a.Shape)
 	}
 
 	if a.WordFlag > 0 {
-		fmt.Fprintf(&buf, ",\"WordFlag\": %d", a.WordFlag)
+		_, _ = fmt.Fprintf(&buf, ",\"WordFlag\": %d", a.WordFlag)
 	}
 	buf.WriteRune('}')
 	return buf.Bytes(), nil

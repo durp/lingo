@@ -95,10 +95,10 @@ func (as AnnotatedSentence) IsValid() bool {
 // Phrase returns the slice of the sentence. While you can do the same by simply doing as[start:end], this method returns errors instead of panicking
 func (as AnnotatedSentence) Phrase(start, end int) (AnnotatedSentence, error) {
 	if start < 0 {
-		return nil, errors.Errorf("Start: %d < 0", start)
+		return nil, errors.Errorf("start: %d < 0", start)
 	}
 	if end > len(as) {
-		return nil, errors.Errorf("End: %d > len(as): %d", end, len(as))
+		return nil, errors.Errorf("end: %d > len(as): %d", end, len(as))
 	}
 	return as[start:end], nil
 }

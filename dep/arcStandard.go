@@ -70,7 +70,6 @@ func (c *configuration) oracle(goldParse *lingo.Dependency) (t transition) {
 	} else if w1 >= 0 && goldParse.Head(w2) == w1 && !c.hasOtherChildren(w2, goldParse) {
 		t.Move = Right
 		t.DependencyType = goldParse.Label(w2)
-
 		return
 	}
 	return // default transition is Shift

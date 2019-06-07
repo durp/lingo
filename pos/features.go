@@ -104,7 +104,7 @@ type featureMap map[feature]float64
 func (fm featureMap) String() string {
 	var buf bytes.Buffer
 	for f := range fm {
-		fmt.Fprintf(&buf, "%s: 1,\n", f)
+		_, _ = fmt.Fprintf(&buf, "%s: 1,\n", f)
 	}
 	return buf.String()
 }

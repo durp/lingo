@@ -1,9 +1,5 @@
 package lingo
 
-// constants that are not pertaining to build tags
-
-var empty struct{}
-
 // NumberWords was generated with this python code
 /*
 	numberWords = {}

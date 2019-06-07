@@ -17,32 +17,13 @@ var MAXTRANSITION int
 
 func buildTransitions(labels []lingo.DependencyType) []transition {
 	ts := make([]transition, 0)
-	// for _, l := range labels {
-	// 	if l == lingo.NoDepType {
-	// 		continue
-	// 	}
-	// 	t := transition{Left, l}
-	// 	ts = append(ts, t)
-	// }
 
-	// for _, l := range labels {
-	// 	if l == lingo.NoDepType {
-	// 		continue
-	// 	}
-
-	// 	t := transition{Right, l}
-	// 	ts = append(ts, t)
-	// }
-
-	// ts = append(ts, transition{Shift, lingo.NoDepType})
-
-	for _, m := range ALLMOVES {
+	for _, m := range AllMoves {
 		for _, l := range labels {
 			if (m == Shift && l != lingo.NoDepType) || (m != Shift && l == lingo.NoDepType) {
 				continue
 			}
-			t := transition{m, l}
-			ts = append(ts, t)
+			ts = append(ts, transition{m, l})
 		}
 	}
 	return ts
@@ -52,13 +33,13 @@ func (t transition) String() string {
 	return fmt.Sprintf("(%s, %s)", t.Move, t.DependencyType)
 }
 
-func lookupTransition(t transition, table []transition) int {
+func lookupTransition(t transition, table []transition) (int, error) {
 	for i, v := range table {
 		if v == t {
-			return i
+			return i, nil
 		}
 	}
-	panic(fmt.Sprintf("Transition %v not found", t))
+	return 0, fmt.Errorf("transition %v not found", t)
 }
 
 // this builds the default transitions

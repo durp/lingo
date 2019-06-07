@@ -127,7 +127,10 @@ func loadOrTrain() {
 	log.Printf("End Training. Training took %v minutes", time.Since(start).Minutes())
 
 	if *save != "" {
-		trained.Save(*save)
+		err := trained.Save(*save)
+		if err != nil {
+			log.Fatal(err)
+		}
 		log.Printf("Model saved as: %v", *save)
 	}
 }
@@ -146,7 +149,7 @@ func cleanup(sigChan chan os.Signal, profiling bool) {
 func main() {
 	flag.Parse()
 
-	if lingo.BUILD_TAGSET != "stanfordtags" && lingo.BUILD_TAGSET != "universaltags" {
+	if lingo.BUILD_TAGSET != "stanfordtags" && lingo.BUILD_TAGSET != "universaltags" && lingo.BUILD_TAGSET != "universaltagsv2" {
 		log.Fatalf("Tagset: %v is unsupported", lingo.BUILD_TAGSET)
 	}
 
@@ -160,7 +163,10 @@ func main() {
 			log.Fatal(err)
 		}
 		profiling = true
-		pprof.StartCPUProfile(f)
+		err = pprof.StartCPUProfile(f)
+		if err != nil {
+			log.Print(err)
+		}
 		defer pprof.StopCPUProfile()
 	}
 
@@ -174,8 +180,14 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		pprof.WriteHeapProfile(f)
-		f.Close()
+		err = pprof.WriteHeapProfile(f)
+		if err != nil {
+			log.Print(err)
+		}
+		err = f.Close()
+		if err != nil {
+			log.Print(err)
+		}
 	}
 
 	if *input != "" {

@@ -10,101 +10,73 @@ import (
 func (sf singleFeature) GobEncode() ([]byte, error) {
 	var buf bytes.Buffer
 	encoder := gob.NewEncoder(&buf)
+	ee := &errEncoder{enc: encoder.Encode}
 
-	if err := encoder.Encode(sf.featureType); err != nil {
-		return nil, err
+	ee.encode(sf.featureType)
+	ee.encode(sf.value)
+	if ee.err != nil {
+		return nil, ee.err
 	}
-
-	if err := encoder.Encode(sf.value); err != nil {
-		return nil, err
-	}
-
 	return buf.Bytes(), nil
 }
 
 func (sf *singleFeature) GobDecode(buf []byte) error {
 	b := bytes.NewBuffer(buf)
-
 	decoder := gob.NewDecoder(b)
+	ed := &errDecoder{dec: decoder.Decode}
 
-	if err := decoder.Decode(&sf.featureType); err != nil {
-		return err
-	}
-
-	if err := decoder.Decode(&sf.value); err != nil {
-		return err
-	}
-
-	return nil
+	ed.decode(&sf.featureType)
+	ed.decode(&sf.value)
+	return ed.err
 }
 
 func (tf tupleFeature) GobEncode() ([]byte, error) {
 	var buf bytes.Buffer
 	encoder := gob.NewEncoder(&buf)
+	ee := &errEncoder{enc: encoder.Encode}
 
-	if err := encoder.Encode(tf.featureType); err != nil {
-		return nil, err
+	ee.encode(tf.featureType)
+	ee.encode(tf.value1)
+	ee.encode(tf.value2)
+	if ee.err != nil {
+		return nil, ee.err
 	}
-
-	if err := encoder.Encode(tf.value1); err != nil {
-		return nil, err
-	}
-
-	if err := encoder.Encode(tf.value2); err != nil {
-		return nil, err
-	}
-
 	return buf.Bytes(), nil
 }
 
 func (tf *tupleFeature) GobDecode(buf []byte) error {
 	b := bytes.NewBuffer(buf)
-
 	decoder := gob.NewDecoder(b)
+	ed := &errDecoder{dec: decoder.Decode}
 
-	if err := decoder.Decode(&tf.featureType); err != nil {
-		return err
-	}
-
-	if err := decoder.Decode(&tf.value1); err != nil {
-		return err
-	}
-
-	if err := decoder.Decode(&tf.value2); err != nil {
-		return err
-	}
-
-	return nil
+	ed.decode(&tf.featureType)
+	ed.decode(&tf.value1)
+	ed.decode(&tf.value2)
+	return ed.err
 }
 
 /* fctuple Gob Interface */
 func (fc fctuple) GobEncode() ([]byte, error) {
 	var buf bytes.Buffer
 	encoder := gob.NewEncoder(&buf)
+	ee := &errEncoder{enc: encoder.Encode}
 
-	if err := encoder.Encode(&fc.feature); err != nil {
-		return nil, err
+	ee.encode(&fc.feature)
+	ee.encode(fc.POSTag)
+	if ee.err != nil {
+		return nil, ee.err
 	}
-
-	if err := encoder.Encode(fc.POSTag); err != nil {
-		return nil, err
-	}
-
 	return buf.Bytes(), nil
 }
 
 func (fc *fctuple) GobDecode(buf []byte) error {
 	b := bytes.NewBuffer(buf)
-
 	decoder := gob.NewDecoder(b)
-	if err := decoder.Decode(&fc.feature); err != nil {
-		return err
-	}
+	ed := &errDecoder{dec: decoder.Decode}
 
-	if err := decoder.Decode(&fc.POSTag); err != nil {
-		return err
-	}
-	return nil
+	ed.decode(&fc.feature)
+	ed.decode(&fc.POSTag)
+	return ed.err
 }
 
 /* Perceptron Gob Interface */
@@ -113,61 +85,53 @@ func (p *perceptron) GobEncode() ([]byte, error) {
 	var buf bytes.Buffer
 	encoder := gob.NewEncoder(&buf)
 
-	// if err := encoder.Encode(&p.weights); err != nil {
-	// 	return nil, err
-	// }
-
-	if err := encoder.Encode(&p.weightsSF); err != nil {
-		return nil, err
+	ee := &errEncoder{enc: encoder.Encode}
+	ee.encode(&p.weightsSF)
+	ee.encode(&p.weightsTF)
+	ee.encode(&p.totals)
+	ee.encode(&p.steps)
+	ee.encode(p.instancesSeen)
+	if ee.err != nil {
+		return nil, ee.err
 	}
-	if err := encoder.Encode(&p.weightsTF); err != nil {
-		return nil, err
-	}
-
-	if err := encoder.Encode(&p.totals); err != nil {
-		return nil, err
-	}
-
-	if err := encoder.Encode(&p.steps); err != nil {
-		return nil, err
-	}
-
-	if err := encoder.Encode(p.instancesSeen); err != nil {
-		return nil, err
-	}
-
 	return buf.Bytes(), nil
+}
+
+type errEncoder struct {
+	enc func(e interface{}) error
+	err error
+}
+
+func (ee *errEncoder) encode(e interface{}) {
+	if ee.err != nil {
+		return
+	}
+	ee.err = ee.enc(e)
 }
 
 func (p *perceptron) GobDecode(buf []byte) error {
 	b := bytes.NewBuffer(buf)
 	decoder := gob.NewDecoder(b)
+	ed := &errDecoder{dec: decoder.Decode}
 
-	// if err := decoder.Decode(&p.weights); err != nil {
-	// 	return err
-	// }
+	ed.decode(&p.weightsSF)
+	ed.decode(&p.weightsTF)
+	ed.decode(&p.totals)
+	ed.decode(&p.steps)
+	ed.decode(&p.instancesSeen)
+	return ed.err
+}
 
-	if err := decoder.Decode(&p.weightsSF); err != nil {
-		return err
+type errDecoder struct {
+	dec func(e interface{}) error
+	err error
+}
+
+func (ed *errDecoder) decode(e interface{}) {
+	if ed.err != nil {
+		return
 	}
-
-	if err := decoder.Decode(&p.weightsTF); err != nil {
-		return err
-	}
-
-	if err := decoder.Decode(&p.totals); err != nil {
-		return err
-	}
-
-	if err := decoder.Decode(&p.steps); err != nil {
-		return err
-	}
-
-	if err := decoder.Decode(&p.instancesSeen); err != nil {
-		return err
-	}
-
-	return nil
+	ed.err = ed.dec(e)
 }
 
 func init() {

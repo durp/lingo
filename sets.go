@@ -8,7 +8,7 @@ import (
 /* TAG SET */
 
 // TagSet is a set of all the POSTags
-type TagSet [MAXTAG]bool
+type TagSet [MAXTAG]struct{}
 
 func (ts TagSet) String() string {
 	var buf bytes.Buffer
@@ -19,7 +19,7 @@ func (ts TagSet) String() string {
 }
 
 // DependencyTypeSet is a set of all the DependencyTypes
-type DependencyTypeSet [MAXDEPTYPE]bool
+type DependencyTypeSet [MAXDEPTYPE]struct{}
 
 func (dts DependencyTypeSet) String() string {
 	var buf bytes.Buffer

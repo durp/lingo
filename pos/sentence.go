@@ -2,8 +2,6 @@ package pos
 
 import "github.com/chewxy/lingo"
 
-// "log"
-
 func (p *Tagger) getSentences() {
 	defer close(p.sentences)
 

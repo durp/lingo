@@ -2,6 +2,7 @@ package treebank
 
 import (
 	"archive/zip"
+	"github.com/pkg/errors"
 	"io"
 
 	"github.com/chewxy/lingo"
@@ -12,8 +13,6 @@ import (
 	"strings"
 )
 
-var empty struct{}
-
 // Loader is anything that loads into a slice of SentenceTags. For future uses, to load tree banks
 type Loader func(string) []SentenceTag
 
@@ -23,12 +22,30 @@ func LoadUniversal(fileName string) []SentenceTag {
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	return ReadConllu(f)
 }
 
+const conllu_unspecified = "_"
+
+const (
+	conllu_ID int = iota
+	conllu_Form
+	conllu_Lemma
+	conllu_UPOS
+	conllu_XPOS
+	conllu_Features
+	conllu_Head
+	conllu_DepRel
+	conllu_Deps
+	conllu_Misc
+)
+
 // ReadConllu reads a file formatted in a CONLLU format
+// It will skip # lines and empty nodes (Head = "_"
 func ReadConllu(reader io.Reader) []SentenceTag {
 	s, st, sh, sdt := reset()
 	sentences := make([]SentenceTag, 0)
@@ -53,52 +70,56 @@ func ReadConllu(reader io.Reader) []SentenceTag {
 		}
 
 		cols := strings.Split(l, "\t")
-		word := cols[1]
+		if strings.HasPrefix(cols[conllu_ID], "#") {
+			// skip comments
+			continue
+		}
+
+		head := cols[conllu_Head]
+		if head == conllu_unspecified {
+			// skip empty node (e.g., GAP)
+			continue
+		}
+		h, err := strconv.Atoi(head)
+		if err != nil {
+			panic(errors.Wrapf(err, "cols: %v", cols)) // panic is the right option, because there is no default
+		}
+
+		word := lingo.UnescapeSpecials(cols[conllu_Form])
 
 		var tag string
 		switch lingo.BUILD_TAGSET {
 		case "stanfordtags":
-			tag = cols[4]
-		case "universaltags":
-			tag = cols[3]
+			tag = cols[conllu_XPOS]
+		case "universaltags", "universaltagsv2":
+			tag = cols[conllu_UPOS]
 		default:
-			panic("Unknown tagset")
+			panic("unknown tagset")
 		}
 
-		head := cols[6]
-		depType := cols[7]
+		t, ok := StringToPOSTag(tag)
+		if ok {
+			usedTags[t] = struct{}{}
+		} else {
+			unknownTags[tag] = struct{}{}
+		}
 
-		var t lingo.POSTag
+		depType := cols[conllu_DepRel]
 		var dt lingo.DependencyType
-		var h int
-		var ok bool
-		var err error
-
-		word = lingo.UnescapeSpecials(word)
+		if dt, ok = StringToDependencyType(depType); ok {
+			usedDepTypes[dt] = struct{}{}
+		} else {
+			unknownDepType[depType] = struct{}{}
+		}
 
 		lexType := StringToLexType(tag)
-		if t, ok = StringToPOSTag(tag); ok {
-			usedTags[t] = true
-		} else {
-			unknownTags[tag] = empty
-		}
-
-		if h, err = strconv.Atoi(head); err != nil {
-			panic(err) // panic is the right option, because there is no default
-		}
-
-		if dt, ok = StringToDependencyType(depType); ok {
-			usedDepTypes[dt] = true
-		} else {
-			unknownDepType[depType] = empty
-		}
-
-		lexeme := lingo.Lexeme{word, lexType, sentenceCount, colCount}
+		lexeme := lingo.Lexeme{Value: word, LexemeType: lexType, Line: sentenceCount, Col: colCount}
 		s = append(s, lexeme)
 		st = append(st, t)
 		sh = append(sh, h)
 		sdt = append(sdt, dt)
 	}
+
 	return sentences
 }
 
@@ -109,7 +130,9 @@ func LoadEWT(filename string) []SentenceTag {
 	if err != nil {
 		panic(err)
 	}
-	defer r.Close()
+	defer func() {
+		_ = r.Close()
+	}()
 
 	sentences := make([]SentenceTag, 0)
 
@@ -119,7 +142,7 @@ func LoadEWT(filename string) []SentenceTag {
 			panic(err)
 		}
 		sentences = append(sentences, ReadConllu(contents)...)
-		contents.Close()
+		_ = contents.Close()
 	}
 
 	return sentences

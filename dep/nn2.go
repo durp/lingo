@@ -312,7 +312,10 @@ func (nn *neuralnetwork2) train(examples []example) error {
 			if err != nil {
 				return err
 			}
-			tid := lookupTransition(ex.transition, nn.transitions)
+			tid, err := lookupTransition(ex.transition, nn.transitions)
+			if err != nil {
+				return errors.Wrapf(err, "example: %s", ex)
+			}
 
 			if err := G.UnsafeLet(nn.cost, G.S(tid)); err != nil {
 				return err

@@ -64,8 +64,8 @@ func (d *DependencyTree) Dot() string {
 
 func dotString(c chan *DependencyTree, out chan string) {
 	g := gographviz.NewEscape()
-	g.SetName("G")
-	g.SetDir(true) // it's always going to be a directed graph
+	_ = g.SetName("G")
+	_ = g.SetDir(true) // it's always going to be a directed graph
 	// g.AddNode("G", "Node_0x0", nil) // add the root
 
 	for t := range c {
@@ -73,7 +73,7 @@ func dotString(c chan *DependencyTree, out chan string) {
 		attrs := map[string]string{
 			"label": fmt.Sprintf("%d: \"%s/%s\"", t.ID, t.Word.Value, t.Word.POSTag),
 		}
-		g.AddNode("G", id, attrs)
+		_ = g.AddNode("G", id, attrs)
 
 		if t.Parent == nil {
 			continue
@@ -83,7 +83,7 @@ func dotString(c chan *DependencyTree, out chan string) {
 		edgeAttrs := map[string]string{
 			"label": fmt.Sprintf("%v", t.Type),
 		}
-		g.AddEdge(parentID, id, true, edgeAttrs)
+		_ = g.AddEdge(parentID, id, true, edgeAttrs)
 	}
 	out <- g.String()
 }

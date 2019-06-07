@@ -23,10 +23,10 @@ type Dependency struct {
 	n int
 }
 
-type depConsOpt func(*Dependency)
+type DepConsOpt func(*Dependency)
 
 // FromAnnotatedSentence creates a dependency from an AnnotatedSentence.
-func FromAnnotatedSentence(s AnnotatedSentence) depConsOpt {
+func FromAnnotatedSentence(s AnnotatedSentence) DepConsOpt {
 	fn := func(d *Dependency) {
 		wc := len(s)
 		d.AnnotatedSentence = s
@@ -37,7 +37,7 @@ func FromAnnotatedSentence(s AnnotatedSentence) depConsOpt {
 }
 
 // AllocTree allocates the lefts and rights. Typical construction of the *Dependency doesn't allocate the trees as they're not necessary for a number of tasks.
-func AllocTree() depConsOpt {
+func AllocTree() DepConsOpt {
 	fn := func(d *Dependency) {
 		d.lefts = make([][]int, d.wordCount)
 		d.rights = make([][]int, d.wordCount)
@@ -52,7 +52,7 @@ func AllocTree() depConsOpt {
 // NewDependency creates a new *Dependency. It takes optional construction options:
 //		FromAnnotatedSentence
 //		AllocTree
-func NewDependency(opts ...depConsOpt) *Dependency {
+func NewDependency(opts ...DepConsOpt) *Dependency {
 	d := new(Dependency)
 
 	for _, opt := range opts {
@@ -197,7 +197,7 @@ func (d *Dependency) SprintRel() string {
 	var buf bytes.Buffer
 
 	for _, e := range d.Edges() {
-		fmt.Fprintf(&buf, "%v(%q-%d, %q-%d)\n", e.Rel, e.Gov.Value, e.Gov.ID, e.Dep.Value, e.Dep.ID)
+		_, _ = fmt.Fprintf(&buf, "%v(%q-%d, %q-%d)\n", e.Rel, e.Gov.Value, e.Gov.ID, e.Dep.Value, e.Dep.ID)
 	}
 
 	return buf.String()

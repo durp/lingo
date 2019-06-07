@@ -45,4 +45,4 @@ func IsModifier(x DependencyType) bool      { return InDepTypes(x, Modifiers) }
 func IsCompound(x DependencyType) bool      { return InDepTypes(x, Compounds) }
 func IsDeterminerRel(x DependencyType) bool { return InDepTypes(x, DeterminerRels) }
 func IsMultiword(x DependencyType) bool     { return InDepTypes(x, MultiWord) }
-func IsQuantifier(x DependencyType) bool    { return InDepTypes(x, QuantifingMods) }
+func IsQuantifier(x DependencyType) bool    { return InDepTypes(x, QuantifyingMods) }

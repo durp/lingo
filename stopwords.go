@@ -8,12 +8,10 @@ var stopwords = make(map[string]struct{})
 
 func init() {
 	for _, s := range strings.Split(sw, " ") {
-		stopwords[s] = empty
+		stopwords[s] = struct{}{}
 	}
 
 }
-
-var specials = `-ROOT- -UNKNOWN-`
 
 func UnescapeSpecials(word string) string {
 	switch word {

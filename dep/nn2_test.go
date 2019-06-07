@@ -47,7 +47,7 @@ func TestNN2(t *testing.T) {
 		sig <- struct{}{}
 	}(ch, sigChan)
 
-	exs := makeExamples(sts, nn.NNConfig, nn.dict, transitions, dummyFix{})
+	exs := makeExamples(sts, nn.dict, transitions, dummyFix{})
 
 	start := time.Now()
 	for i := 0; i < epochs; i++ {
@@ -73,7 +73,7 @@ func TestNN2(t *testing.T) {
 	// PREDICTION TIME!
 
 	ss2 := simpleSentence()
-	exs = makeExamples(ss2, nn.NNConfig, nn.dict, transitions, dummyFix{})
+	exs = makeExamples(ss2, nn.dict, transitions, dummyFix{})
 	start = time.Now()
 	for i, ex := range exs {
 		ind, err := nn.pred(ex.features)

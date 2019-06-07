@@ -4,7 +4,7 @@ package lingo
 
 const BUILD_RELSET = "stanfordrel"
 
-//go:generate stringer -type=DependencyType -output=dependencyType_stanford_string.go
+//go:generate go run golang.org/x/tools/cmd/stringer -tags stanfordrel -type=DependencyType -output=dependencyType_stanford_string.go
 
 // http://nlp.stanford.edu/software/dependencies_manual.pdf
 const (
@@ -91,4 +91,4 @@ var Modifiers = []DependencyType{AMod}
 var Compounds = []DependencyType{Compound}
 var DeterminerRels = []DependencyType{Det, DetMod}
 var MultiWord = []DependencyType{MWE, MWPrep, Compound, Parataxis}
-var QuantifingMods = []DependencyType{QuantMod, NumMod}
+var QuantifyingMods = []DependencyType{QuantMod, NumMod}

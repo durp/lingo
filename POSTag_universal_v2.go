@@ -1,10 +1,10 @@
-// +build universaltags
+// +build universaltagsv2
 
 package lingo
 
-//go:generate go run golang.org/x/tools/cmd/stringer -tags universaltags -type=POSTag -output=POSTag_universal_string.go
+//go:generate go run golang.org/x/tools/cmd/stringer -tags universaltagsv2 -type=POSTag -output=POSTag_universal_v2_string.go
 
-const BUILD_TAGSET = "universaltags"
+const BUILD_TAGSET = "universaltagsv2"
 
 const (
 	X POSTag = iota // aka NULLTAG

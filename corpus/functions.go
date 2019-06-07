@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// GenerateCorpus creates a Corpus given a set of SentenceTag from a training set.
+// GenerateCorpus creates a Corpus given a set of SentenceTags from a training set.
 func GenerateCorpus(sentenceTags []treebank.SentenceTag) *Corpus {
 	words := make([]string, 3)
 	frequencies := make([]int, 3)

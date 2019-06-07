@@ -65,6 +65,8 @@ func loadDepModel() {
 
 func saveModel() {
 	if *save != "" && DepModel != nil {
-		DepModel.Save(*save)
+		if err := DepModel.Save(*save); err != nil {
+			log.Print(err)
+		}
 	}
 }

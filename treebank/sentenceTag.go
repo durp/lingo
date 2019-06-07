@@ -6,7 +6,7 @@ import (
 	"github.com/chewxy/lingo"
 )
 
-// SentenceTag is a struc that holds a sentence, tags, heads and labels
+// SentenceTag is a struct that holds a sentence, tags, heads and labels
 type SentenceTag struct {
 	Sentence lingo.LexemeSentence
 	Tags     []lingo.POSTag

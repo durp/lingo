@@ -2,7 +2,7 @@
 
 package lingo
 
-//go:generate stringer -type=POSTag -output=POSTag_stanford_string.go
+//go:generate go run golang.org/x/tools/cmd/stringer -tags stanfordtags -type=POSTag -output=POSTag_stanford_string.go
 
 const BUILD_TAGSET = "stanfordtags"
 

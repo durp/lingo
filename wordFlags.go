@@ -38,48 +38,48 @@ func (l Lexeme) Flags() WordFlag {
 	s := l.Value
 
 	if StringIs(s, unicode.IsLetter) {
-		wf |= (1 << IsLetter)
+		wf |= 1 << IsLetter
 	}
 
 	if StringIs(s, unicode.IsDigit) {
-		wf |= (1 << IsDigit)
+		wf |= 1 << IsDigit
 	}
 
 	if StringIs(s, isAscii) {
-		wf |= (1 << IsAscii)
+		wf |= 1 << IsAscii
 	}
 
 	if StringIs(s, unicode.IsLower) {
-		wf |= (1 << IsLower)
+		wf |= 1 << IsLower
 	}
 
 	if StringIs(s, unicode.IsPunct) {
-		wf |= (1 << IsPunct)
+		wf |= 1 << IsPunct
 	}
 
 	if StringIs(s, unicode.IsSpace) {
-		wf |= (1 << IsSpace)
+		wf |= 1 << IsSpace
 	}
 
 	if StringIs(s, unicode.IsUpper) {
-		wf |= (1 << IsUpper)
+		wf |= 1 << IsUpper
 	}
 
 	if l.LexemeType == URI {
-		wf |= (1 << LikeURL)
+		wf |= 1 << LikeURL
 	}
 
 	if _, ok := NumberWords[strings.ToLower(s)]; ok {
-		wf |= (1 << LikeNum)
+		wf |= 1 << LikeNum
 	}
 
 	if _, ok := stopwords[s]; ok {
-		wf |= (1 << IsStopWord)
+		wf |= 1 << IsStopWord
 	}
 
 	if len(s) > 0 {
 		if (unicode.IsUpper(rune(s[0])) || unicode.IsTitle(rune(s[0]))) && StringIs(s[1:], unicode.IsLower) {
-			wf |= (1 << IsTitle)
+			wf |= 1 << IsTitle
 		}
 	}
 

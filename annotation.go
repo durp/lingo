@@ -9,7 +9,7 @@ import (
 // Annotation is the word and it's metadata.
 // This includes the position, its dependency head (if available), its lemma, POSTag, etc
 //
-// A collection of Annoations - AnnotatedSentence is also a representation of a dependency parse
+// A collection of Annotations - AnnotatedSentence is also a representation of a dependency parse
 //
 // Every field is exported for easy gobbing. be very careful with setting stuff
 type Annotation struct {

@@ -183,10 +183,18 @@ func longSentence() []treebank.SentenceTag {
 }
 
 func allSentences() []treebank.SentenceTag {
-	sentenceTags := treebank.ReadConllu(strings.NewReader(nnps))
-	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(simple))...)
-	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(med))...)
-	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(long))...)
+	conv := func(s string) string {
+		return s
+	}
+	if lingo.BUILD_RELSET == "universalv2" {
+		conv = func(s string) string {
+			return strings.ReplaceAll(s, "dobj", "obj")
+		}
+	}
+	sentenceTags := treebank.ReadConllu(strings.NewReader(conv(nnps)))
+	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(conv(simple)))...)
+	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(conv(med)))...)
+	sentenceTags = append(sentenceTags, treebank.ReadConllu(strings.NewReader(conv(long)))...)
 	return sentenceTags
 }
 
@@ -196,7 +204,7 @@ func cvSentences() []treebank.SentenceTag {
 
 func hash(s string) string {
 	h := md5.New()
-	io.WriteString(h, s)
+	_, _ = io.WriteString(h, s)
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
@@ -206,10 +214,14 @@ func cache(input string, s lingo.AnnotatedSentence) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	w := bufio.NewWriter(f)
-	defer w.Flush()
+	defer func() {
+		_ = w.Flush()
+	}()
 
 	encoder := gob.NewEncoder(w)
 
@@ -223,7 +235,9 @@ func useCached(filename string) *lingo.Dependency {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	r := bufio.NewReader(f)
 	decoder := gob.NewDecoder(r)

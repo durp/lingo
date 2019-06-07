@@ -1,10 +1,10 @@
-// +build !stanfordrel
+// +build universalrel
 
 package lingo
 
 const BUILD_RELSET = "universalrel"
 
-//go:generate stringer -type=DependencyType -output=dependencyType_universal_string.go
+//go:generate go run golang.org/x/tools/cmd/stringer -type=DependencyType -output=dependencyType_universal_string.go
 
 // http://universaldependencies.github.io/docs/en/dep/all.html
 const (
@@ -104,4 +104,4 @@ var Modifiers = []DependencyType{AMod}
 var Compounds = []DependencyType{Compound, Compound_Part}
 var DeterminerRels = []DependencyType{Det, Det_PreDet}
 var MultiWord = []DependencyType{MWE, Compound, Compound_Part, Parataxis}
-var QuantifingMods = []DependencyType{NumMod}
+var QuantifyingMods = []DependencyType{NumMod}

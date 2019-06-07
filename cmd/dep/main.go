@@ -32,11 +32,11 @@ var DepModel *dep.Model
 var toLoad, toTrain bool
 
 func init() {
-	if lingo.BUILD_TAGSET != "stanfordtags" && lingo.BUILD_TAGSET != "universaltags" {
+	if lingo.BUILD_TAGSET != "stanfordtags" && lingo.BUILD_TAGSET != "universaltags" && lingo.BUILD_TAGSET != "universaltagsv2" {
 		log.Fatalf("Tagset %q unsupported", lingo.BUILD_TAGSET)
 	}
 
-	if lingo.BUILD_RELSET != "stanfordrel" && lingo.BUILD_RELSET != "universalrel" {
+	if lingo.BUILD_RELSET != "stanfordrel" && lingo.BUILD_RELSET != "universalrel" && lingo.BUILD_RELSET != "universalrelv2" {
 		log.Fatalf("Relset %q unsupported", lingo.BUILD_RELSET)
 	}
 }
@@ -54,8 +54,12 @@ func cleanup(sigChan chan os.Signal, cpuprofiling, memprofiling bool) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			pprof.WriteHeapProfile(f)
-			f.Close()
+			if err := pprof.WriteHeapProfile(f); err != nil {
+				log.Print(err)
+			}
+			if err := f.Close(); err != nil {
+				log.Print(err)
+			}
 		}
 		saveModel()
 		os.Exit(1)
@@ -75,7 +79,9 @@ func main() {
 			log.Fatal(err)
 		}
 		cpuprofiling = true
-		pprof.StartCPUProfile(f)
+		if err := pprof.StartCPUProfile(f); err != nil {
+			log.Print(err)
+		}
 		defer pprof.StopCPUProfile()
 	}
 

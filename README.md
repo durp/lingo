@@ -1,12 +1,12 @@
 # lingo #
 
-<img src="https://raw.githubusercontent.com/chewxy/lingo/master/media/gopher_small.png" align="right" />
+<img src="https://raw.githubusercontent.com/chewxy/lingo/master/media/gopher_small.png" alt="gopher logo" />
 
 [![Build Status](https://travis-ci.org/chewxy/lingo.svg?branch=master)](https://travis-ci.org/chewxy/lingo)
 
 package `lingo` provides the data structures and algorithms required for natural language processing.
 
-Specifically, it provides a POS Tagger (`lingo/pos`), a Dependency Parser (`lingo/dep`), and a basic tokenizer (`lingo/lexer`) for English. It also provides data structures for holding corpuses (`lingo/corpus`), and treebanks (`lingo/treebank`).
+Specifically, it provides a POS Tagger (`lingo/pos`), a Dependency Parser (`lingo/dep`), and a basic tokenizer (`lingo/lexer`) for English. It also provides data structures for holding corpora (`lingo/corpus`), and treebanks (`lingo/treebank`).
 
 The aim of this package is to provide a production quality pipeline for natural language processing.
 
@@ -29,7 +29,7 @@ See the individual packages for usage. There is also a bunch of executables in t
 
 A natural language pipeline with this package is heavily channels driven. Here's is an example for dependency parsing:
 
-```go
+```
 func main() {
 	inputString: `The cat sat on the mat`
 	lx := lexer.New("dummy", strings.NewReader(inputString)) // lexer - required to break a sentence up into words.
@@ -66,7 +66,7 @@ For specific tasks (POS tagging, parsing, named entity recognition etc), refer t
 
 Perhaps the most important data structure is the `*Annotation` structure. It basically holds a word and the associated metadata for the word.
 
-For dependency parses, the graph takes three forms: `*Dependency`, `*DependencyTree` and `*Annotation`. All three forms are convertable from one to another. TODO: explain rationale behind each data type.
+For dependency parses, the graph takes three forms: `*Dependency`, `*DependencyTree` and `*Annotation`. All three forms are convertible from one to another. TODO: explain rationale behind each data type.
 
 ## Quirks ##
 
@@ -82,18 +82,19 @@ The following build tags are supported:
 
 * stanfordtags
 * universaltags
+* universaltagsv2
 * stanfordrel
 * universalrel
+* universalrelv2
+* debug
 
 To use a specific tagset or relset, build your program thusly: `go build -tags='stanfordtags'`.
-
-The default tag and dependency rel types are the universal dependencies version.
 
 ### Lexer ###
 
 You should also note that the tokenizer, `lingo/lexer` is not your usual run-of-the-mill NLP tokenizer. It's a tokenizer that tokenizes by space, with some specific rules for English. It was inspired by Rob Pike's talk on lexers. I thought it'd be cool to write something like that for NLP.
 
-The test cases in package `lingo/lexer` showcases how it handles unicode, and other pathalogical english.
+The test cases in package `lingo/lexer` showcases how it handles unicode, and other pathological english.
 
 # Contributing #
 see CONTRIBUTING.md for more info

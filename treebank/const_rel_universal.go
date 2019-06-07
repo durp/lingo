@@ -1,10 +1,10 @@
-// +build !stanfordrel
+// +build universalrel
 
 package treebank
 
 import "github.com/chewxy/lingo"
 
-var dependencyTable map[string]lingo.DependencyType = map[string]lingo.DependencyType{
+var dependencyTable = map[string]lingo.DependencyType{
 	"dep":          lingo.Dep,
 	"root":         lingo.Root,
 	"nsubj":        lingo.NSubj,

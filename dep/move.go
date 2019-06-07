@@ -13,5 +13,5 @@ const (
 	MAXMOVE
 )
 
-// ALLMOVES is the set of all possible moves
-var ALLMOVES = [...]Move{Left, Right, Shift}
+// AllMoves is the set of all possible moves
+var AllMoves = []Move{Left, Right, Shift}

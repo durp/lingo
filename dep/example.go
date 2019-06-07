@@ -16,12 +16,11 @@ type example struct {
 	labels   []int // labels are used in scoring the transitions
 }
 
-func makeExamples(sentenceTags []treebank.SentenceTag, conf NNConfig, dict *corpus.Corpus, ts []transition, f lingo.AnnotationFixer) []example {
+func makeExamples(sentenceTags []treebank.SentenceTag, dict *corpus.Corpus, ts []transition, f lingo.AnnotationFixer) []example {
 	var examples []example
-
 	var tarpit, nonprojective, good int
-	for i, sentenceTag := range sentenceTags {
-		exs, err := makeOneExample(i, sentenceTag, dict, ts, f)
+	for _, sentenceTag := range sentenceTags {
+		exs, err := makeOneExample(sentenceTag, dict, ts, f)
 		if err != nil {
 			switch err.(type) {
 			case TarpitError:
@@ -40,7 +39,7 @@ func makeExamples(sentenceTags []treebank.SentenceTag, conf NNConfig, dict *corp
 }
 
 // makeOneExample is an example of a poorly named function. It makes an example from a SentenceTag
-func makeOneExample(i int, sentenceTag treebank.SentenceTag, dict *corpus.Corpus, ts []transition, f lingo.AnnotationFixer) ([]example, error) {
+func makeOneExample(sentenceTag treebank.SentenceTag, dict *corpus.Corpus, ts []transition, f lingo.AnnotationFixer) ([]example, error) {
 	var examples []example
 
 	s := sentenceTag.AnnotatedSentence(f)
@@ -70,7 +69,7 @@ func makeOneExample(i int, sentenceTag treebank.SentenceTag, dict *corpus.Corpus
 
 			ex := example{transition{oracle.Move, oracle.DependencyType}, features, labels}
 			examples = append(examples, ex)
-
+			logf("sentence: %s", sentenceTag)
 			c.apply(oracle)
 			count++
 		}
